@@ -5,6 +5,7 @@ import com.hari.model.TodoList;
 import com.hari.model.User;
 import com.hari.repository.TodoListRepository;
 import com.hari.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +14,8 @@ public class TodoListServiceImpl implements TodoListService{
     private TodoListRepository todoListRepository;
     private UserRepository userRepository;
 
-    public TodoListServiceImpl(TodoListService todoListService,UserRepository userRepository){
+    @Autowired
+    public TodoListServiceImpl(TodoListRepository todoListRepository,UserRepository userRepository){
         this.todoListRepository = todoListRepository;
         this.userRepository = userRepository;
     }

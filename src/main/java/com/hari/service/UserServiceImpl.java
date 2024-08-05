@@ -4,6 +4,7 @@ import com.hari.exception.UserAlreadyExistException;
 import com.hari.exception.UserNotFoundException;
 import com.hari.model.User;
 import com.hari.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -11,9 +12,13 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService{
 
     private UserRepository userRepository;
+    private PasswordService passwordService;
 
-    UserServiceImpl(UserRepository userRepository){
+
+    @Autowired
+    UserServiceImpl(UserRepository userRepository,PasswordService passwordService){
         this.userRepository = userRepository;
+        this.passwordService = passwordService;
     }
 
     @Override
@@ -22,6 +27,7 @@ public class UserServiceImpl implements UserService{
         if(user1 != null){
             throw  new UserAlreadyExistException("User already exist");
         }
+        user.setPassword(passwordService.hashPassword(user.getPassword()));
         userRepository.save(user);
     }
 
@@ -30,13 +36,12 @@ public class UserServiceImpl implements UserService{
 
         User user1 = userRepository.findByUseremail(user.getUseremail());
 
-        System.out.println(user.getPassword().equals(user1.getPassword()));
-
         if(user1 == null){
             throw new UserNotFoundException("User not found");
         }
+        System.out.println(passwordService.checkPassword(user1.getPassword(),user.getPassword()));
 
-        if(!user.getPassword().equals(user1.getPassword())){
+        if(!passwordService.checkPassword(user1.getPassword(),user.getPassword())){
             throw new RuntimeException("Password Doesnt Match");
         }
     }
